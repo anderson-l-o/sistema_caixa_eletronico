@@ -1,0 +1,15 @@
+{
+  "name": "sistema-caixa-eletronico",
+  "version": "1.0.0",
+  "description": "Sistema de Caixa Eletrônico em TypeScript com arquitetura MVC",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "tsc && node dist/app.js" 
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.12.7"
+  }
+}

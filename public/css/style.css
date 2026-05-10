@@ -1,0 +1,209 @@
+/* ── Reset & Base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0a0f1e;
+  --card:      #111827;
+  --card2:     #1a2235;
+  --border:    #1e2d45;
+  --accent:    #00d4ff;
+  --accent2:   #0099cc;
+  --green:     #00e676;
+  --red:       #ff5252;
+  --yellow:    #ffd740;
+  --danger:    #ff5252;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --radius:    12px;
+  --shadow:    0 8px 32px rgba(0,0,0,.5);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+header { text-align: center; margin-bottom: 32px; }
+header h1 {
+  font-size: 2rem;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(0,212,255,.4);
+}
+header p { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+
+/* ── Card ─────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 32px;
+  width: 100%;
+  max-width: 480px;
+}
+.card h2 {
+  font-size: 1.05rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Inputs & Buttons ─────────────────────────────────────────────────── */
+label { font-size: .8rem; color: var(--muted); display: block; margin-bottom: 4px; }
+
+input, select {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border .2s;
+}
+input:focus, select:focus { border-color: var(--accent); }
+select option { background: var(--card2); }
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter .15s, transform .1s;
+}
+button:active { transform: scale(.98); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.btn-primary { background: var(--accent);  color: #000; }
+.btn-danger  { background: var(--red);     color: #fff; }
+.btn-success { background: var(--green);   color: #000; }
+.btn-ghost   { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+button:not(:disabled):hover { filter: brightness(1.15); }
+
+/* ── Alert / Feedback ─────────────────────────────────────────────────── */
+.alert {
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: .9rem;
+  margin-top: 16px;
+  display: none;
+}
+.alert.show  { display: block; }
+.alert-ok    { background: rgba(0,230,118,.12); border: 1px solid var(--green);  color: var(--green); }
+.alert-err   { background: rgba(255,82,82,.12);  border: 1px solid var(--red);   color: var(--red); }
+.alert-warn  { background: rgba(255,215,64,.10); border: 1px solid var(--yellow);color: var(--yellow); }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────── */
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 24px; }
+.tab {
+  flex: 1 1 auto; min-width: 70px; padding: 8px 6px; text-align: center; border-radius: 8px;
+  cursor: pointer; font-size: .78rem; font-weight: 600;
+  background: var(--card2); color: var(--muted);
+  border: 1px solid var(--border);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+/* ── Saldo badge ──────────────────────────────────────────────────────── */
+.saldo-badge {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.saldo-badge .label { font-size: .75rem; color: var(--muted); }
+.saldo-badge .value { font-size: 1.3rem; font-weight: 700; color: var(--green); }
+
+/* ── Cédulas entregues ────────────────────────────────────────────────── */
+.cedulas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.cedula-chip {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+  font-size: .85rem;
+}
+.cedula-chip span { display: block; font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+
+/* ── Sugestões ────────────────────────────────────────────────────────── */
+.sugestoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.sugestao-btn {
+  width: auto;
+  padding: 6px 14px;
+  background: var(--card2);
+  border: 1px solid var(--accent2);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: .85rem;
+  font-weight: 600;
+}
+.sugestao-btn:hover { background: var(--accent2); color: #000; }
+
+/* ── Estoque tabela ───────────────────────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: .78rem; text-transform: uppercase; white-space: nowrap; }
+td:last-child, th:last-child { text-align: right; }
+.total-row td { font-weight: 700; color: var(--accent); border-top: 1px solid var(--border); }
+
+/* ── Tabela Relatório ─────────────────────────────────────────────────── */
+.tabela-relatorio-wrap { overflow-x: auto; margin: 0 -4px; }
+.tabela-relatorio { table-layout: fixed; }
+.tabela-relatorio th:nth-child(1),
+.tabela-relatorio td:nth-child(1) { width: 148px; white-space: nowrap; font-size: .78rem; }
+.tabela-relatorio th:nth-child(2),
+.tabela-relatorio td:nth-child(2) { width: 80px; }
+.tabela-relatorio th:nth-child(3),
+.tabela-relatorio td:nth-child(3) { width: 100px; }
+.tabela-relatorio th:nth-child(4),
+.tabela-relatorio td:nth-child(4) { width: 100px; text-align: right; white-space: nowrap; }
+.tabela-relatorio th:nth-child(5),
+.tabela-relatorio td:nth-child(5) { width: auto; font-size: .8rem; color: var(--muted); word-break: break-word; text-align: left !important; }
+.tabela-relatorio td:nth-child(4),
+.tabela-relatorio th:nth-child(4) { text-align: right !important; }
+
+/* ── Logout link ──────────────────────────────────────────────────────── */
+.logout { margin-top: 20px; text-align: center; }
+.logout a { color: var(--muted); font-size: .82rem; cursor: pointer; text-decoration: underline; }
+.logout a:hover { color: var(--red); }
+
+/* ── Spinner ──────────────────────────────────────────────────────────── */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  margin-right: 6px; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Sections ─────────────────────────────────────────────────────────── */
+.section { display: none; }
+.section.active { display: block; }

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório — Caixa Eletrônico</title>
+  <style>
+    :root {
+      --bg:      #0f1117;
+      --card:    #1a1d27;
+      --card2:   #22263a;
+      --border:  #2e3250;
+      --accent:  #00d4ff;
+      --green:   #22c55e;
+      --red:     #ef4444;
+      --yellow:  #f59e0b;
+      --blue:    #3b82f6;
+      --muted:   #6b7280;
+      --text:    #e2e8f0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .5px;
+    }
+    .topbar-title span { color: var(--text); font-weight: 400; font-size: .9rem; }
+    .btn-back {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .85rem;
+      transition: background .2s;
+      text-decoration: none;
+    }
+    .btn-back:hover { background: var(--border); }
+
+    /* ── Layout principal ── */
+    .page { padding: 24px 28px; max-width: 1200px; margin: 0 auto; }
+
+    /* ── Cards de estatísticas ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      border-top: 3px solid var(--border);
+    }
+    .stat-card.green  { border-top-color: var(--green); }
+    .stat-card.red    { border-top-color: var(--red); }
+    .stat-card.yellow { border-top-color: var(--yellow); }
+    .stat-card.blue   { border-top-color: var(--blue); }
+    .stat-card.accent { border-top-color: var(--accent); }
+    .stat-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .stat-card.green  .stat-value { color: var(--green); }
+    .stat-card.red    .stat-value { color: var(--red); }
+    .stat-card.yellow .stat-value { color: var(--yellow); }
+    .stat-card.blue   .stat-value { color: var(--blue); }
+    .stat-card.accent .stat-value { color: var(--accent); }
+
+    /* ── Filtros ── */
+    .filtros {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    .filtro-grupo { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+    .filtro-grupo label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .filtro-grupo input,
+    .filtro-grupo select {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .filtro-grupo input:focus,
+    .filtro-grupo select:focus { border-color: var(--accent); }
+    .filtro-grupo select option { background: var(--card2); }
+    .btn-buscar {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: .88rem;
+      transition: opacity .2s;
+      white-space: nowrap;
+      align-self: flex-end;
+    }
+    .btn-buscar:hover { opacity: .85; }
+    .btn-limpar {
+      background: var(--card2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .85rem;
+      transition: color .2s;
+      white-space: nowrap;
+      align-self: flex-end;
+    }
+    .btn-limpar:hover { color: var(--text); }
+
+    /* ── Tabela ── */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-header-title { font-weight: 600; font-size: .95rem; }
+    .table-count { font-size: .8rem; color: var(--muted); }
+    .table-scroll { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .87rem;
+    }
+    thead { background: var(--card2); }
+    th {
+      padding: 11px 16px;
+      text-align: left;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(46,50,80,.5);
+      vertical-align: middle;
+    }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: rgba(255,255,255,.03); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* Barra colorida à esquerda */
+    .row-realizado td:first-child { border-left: 3px solid var(--green); }
+    .row-negado    td:first-child { border-left: 3px solid var(--red); }
+    .row-impossivel td:first-child { border-left: 3px solid var(--yellow); }
+    .row-carga     td:first-child { border-left: 3px solid var(--blue); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-green  { background: rgba(34,197,94,.15);  color: var(--green); }
+    .badge-red    { background: rgba(239,68,68,.15);   color: var(--red); }
+    .badge-yellow { background: rgba(245,158,11,.15);  color: var(--yellow); }
+    .badge-blue   { background: rgba(59,130,246,.15);  color: var(--blue); }
+
+    .conta-chip {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .valor-cell { font-weight: 700; white-space: nowrap; }
+    .desc-cell  { color: var(--muted); font-size: .82rem; max-width: 300px; }
+
+    /* Estado vazio */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .empty-state p { font-size: .9rem; }
+
+    /* Loading */
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .topbar { padding: 12px 16px; }
+      .page   { padding: 16px; }
+      .filtros { flex-direction: column; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-title">
+    📋 Relatório de Movimentações <span>— Caixa Eletrônico</span>
+  </div>
+  <a class="btn-back" href="/">← Voltar ao Painel</a>
+</div>
+
+<div class="page">
+
+  <!-- Estatísticas -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card accent">
+      <div class="stat-label">Total de registros</div>
+      <div class="stat-value" id="stat-total">—</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Saques realizados</div>
+      <div class="stat-value" id="stat-realizados">—</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Saques negados</div>
+      <div class="stat-value" id="stat-negados">—</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">Saques impossíveis</div>
+      <div class="stat-value" id="stat-impossiveis">—</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Cargas de estoque</div>
+      <div class="stat-value" id="stat-cargas">—</div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <div class="filtro-grupo">
+      <label>ID da Conta</label>
+      <input id="f-conta" type="text" placeholder="Ex: 001, joao..." autocomplete="off" />
+    </div>
+    <div class="filtro-grupo">
+      <label>Tipo</label>
+      <select id="f-tipo">
+        <option value="">Todos</option>
+        <option value="SAQUE_REALIZADO">✅ Realizado</option>
+        <option value="SAQUE_NEGADO">❌ Negado</option>
+        <option value="SAQUE_IMPOSSIVEL">⚠️ Impossível</option>
+        <option value="CARGA">📦 Carga</option>
+      </select>
+    </div>
+    <div class="filtro-grupo">
+      <label>Busca na descrição</label>
+      <input id="f-desc" type="text" placeholder="Palavras-chave..." />
+    </div>
+    <button class="btn-buscar" onclick="buscar()">🔎 Buscar</button>
+    <button class="btn-limpar" onclick="limpar()">✕ Limpar</button>
+  </div>
+
+  <!-- Tabela -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <div class="table-header-title">📄 Registros</div>
+      <div class="table-count" id="table-count"></div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data / Hora</th>
+            <th>Conta</th>
+            <th>Tipo</th>
+            <th>Valor</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Estado ───────────────────────────────────────────────────────────────────
+  let _todos = [];   // todos os registros carregados da API
+  let _filtrados = []; // após aplicar filtros locais
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    // Lê parâmetro ?conta= da URL para pré-preencher filtro
+    const params = new URLSearchParams(window.location.search);
+    const contaParam = params.get('conta') ?? '';
+    if (contaParam) document.getElementById('f-conta').value = contaParam;
+
+    // Enter nos campos dispara busca
+    ['f-conta', 'f-tipo', 'f-desc'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') buscar();
+      });
+    });
+    document.getElementById('f-tipo').addEventListener('change', aplicarFiltrosLocais);
+    document.getElementById('f-desc').addEventListener('input',  aplicarFiltrosLocais);
+
+    buscar();
+  });
+
+  // ── API ───────────────────────────────────────────────────────────────────────
+  async function buscar() {
+    const contaId = document.getElementById('f-conta').value.trim();
+    const url = contaId
+      ? `/api/admin/movimentacoes/${encodeURIComponent(contaId)}`
+      : '/api/admin/movimentacoes';
+
+    mostrarLoading();
+    try {
+      const res  = await fetch(url);
+      const data = await res.json();
+      _todos = data.movimentacoes ?? [];
+      aplicarFiltrosLocais();
+    } catch (e) {
+      mostrarErro('Não foi possível conectar ao servidor.');
+    }
+  }
+
+  // ── Filtros locais (tipo + descrição) ─────────────────────────────────────────
+  function aplicarFiltrosLocais() {
+    const tipo = document.getElementById('f-tipo').value;
+    const desc = document.getElementById('f-desc').value.toLowerCase().trim();
+
+    _filtrados = _todos.filter(m => {
+      if (tipo && m.tipo !== tipo) return false;
+      if (desc && !m.descricao.toLowerCase().includes(desc)) return false;
+      return true;
+    });
+
+    // Ordena por data decrescente (mais recente no topo)
+    _filtrados.sort((a, b) => {
+      const dateA = new Date(a.dataHora).getTime();
+      const dateB = new Date(b.dataHora).getTime();
+      return dateB - dateA; // Decrescente
+    });
+
+    atualizarEstatisticas(_filtrados);
+    renderizar(_filtrados);
+  }
+
+  function limpar() {
+    document.getElementById('f-conta').value = '';
+    document.getElementById('f-tipo').value  = '';
+    document.getElementById('f-desc').value  = '';
+    buscar();
+  }
+
+  // ── Estatísticas ──────────────────────────────────────────────────────────────
+  function atualizarEstatisticas(movs) {
+    const c = { SAQUE_REALIZADO: 0, SAQUE_NEGADO: 0, SAQUE_IMPOSSIVEL: 0, CARGA: 0 };
+    movs.forEach(m => { if (c[m.tipo] !== undefined) c[m.tipo]++; });
+    document.getElementById('stat-total').textContent       = movs.length;
+    document.getElementById('stat-realizados').textContent  = c.SAQUE_REALIZADO;
+    document.getElementById('stat-negados').textContent     = c.SAQUE_NEGADO;
+    document.getElementById('stat-impossiveis').textContent = c.SAQUE_IMPOSSIVEL;
+    document.getElementById('stat-cargas').textContent      = c.CARGA;
+    document.getElementById('table-count').textContent =
+      movs.length === 1 ? '1 registro' : `${movs.length} registros`;
+  }
+
+  // ── Renderização ──────────────────────────────────────────────────────────────
+  const BADGE = {
+    SAQUE_REALIZADO:  '<span class="badge badge-green">✅ Realizado</span>',
+    SAQUE_NEGADO:     '<span class="badge badge-red">❌ Negado</span>',
+    SAQUE_IMPOSSIVEL: '<span class="badge badge-yellow">⚠️ Impossível</span>',
+    CARGA:            '<span class="badge badge-blue">📦 Carga</span>',
+  };
+  const ROW_CLASS = {
+    SAQUE_REALIZADO:  'row-realizado',
+    SAQUE_NEGADO:     'row-negado',
+    SAQUE_IMPOSSIVEL: 'row-impossivel',
+    CARGA:            'row-carga',
+  };
+
+  function renderizar(movs) {
+    const tbody = document.getElementById('tbody');
+    if (!movs.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="5">
+          <div class="empty-state">
+            <div class="icon">🔍</div>
+            <p>Nenhuma movimentação encontrada para os filtros aplicados.</p>
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = movs.map(m => {
+      const valorExib = m.valorFormatado ?? m.valor ?? '—';
+      const conta     = m.contaId ?? '—';
+      const badge     = BADGE[m.tipo] ?? `<span class="badge">${m.tipo}</span>`;
+      const rowClass  = ROW_CLASS[m.tipo] ?? '';
+      return `
+        <tr class="${rowClass}">
+          <td style="white-space:nowrap;font-size:.82rem;color:var(--muted)">${m.dataHora}</td>
+          <td><span class="conta-chip">${conta}</span></td>
+          <td>${badge}</td>
+          <td class="valor-cell">${valorExib}</td>
+          <td class="desc-cell">${m.descricao}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  function mostrarLoading() {
+    document.getElementById('tbody').innerHTML = `
+      <tr><td colspan="5">
+        <div class="loading-state">
+          <span class="spinner"></span> Carregando registros...
+        </div>
+      </td></tr>`;
+    ['stat-total','stat-realizados','stat-negados','stat-impossiveis','stat-cargas']
+      .forEach(id => document.getElementById(id).textContent = '…');
+    document.getElementById('table-count').textContent = '';
+  }
+
+  function mostrarErro(msg) {
+    document.getElementById('tbody').innerHTML = `
+      <tr><td colspan="5">
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          <p style="color:var(--red)">${msg}</p>
+        </div>
+      </td></tr>`;
+  }
+</script>
+</body>
+</html>

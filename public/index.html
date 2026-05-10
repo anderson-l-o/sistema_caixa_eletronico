@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caixa Eletrônico</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header>
+  <h1>💳 CAIXA ELETRÔNICO</h1>
+  <p>Sistema de Autoatendimento</p>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     TELA 1 — LOGIN
+══════════════════════════════════════════════════════════ -->
+<div id="tela-login" class="card section active">
+  <h2>🔐 Identificação</h2>
+  <label for="inp-conta">ID da Conta</label>
+  <input id="inp-conta" type="text" placeholder="Ex: joao, 001, 002..." autocomplete="off" />
+  <button class="btn-primary" onclick="login()">Entrar</button>
+  <button class="btn-ghost" style="margin-top:8px" onclick="mostrarAdmin()">⚙ Painel do Operador</button>
+  <button class="btn-ghost" style="margin-top:8px;color:var(--danger)" onclick="encerrarSistema()">⏻ Encerrar Sistema</button>
+  <div id="alert-login" class="alert"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TELA 2 — USUÁRIO
+══════════════════════════════════════════════════════════ -->
+<div id="tela-usuario" class="card section">
+  <h2>👤 Olá, <span id="nome-usuario"></span></h2>
+
+  <div class="saldo-badge">
+    <div>
+      <div class="label">Saldo disponível</div>
+      <div class="value" id="saldo-display">—</div>
+    </div>
+    <button class="btn-ghost" style="width:auto;padding:6px 12px;font-size:.8rem" onclick="atualizarSaldo()">↺</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="ativarTab('saque')">💸 Saque</div>
+  </div>
+
+  <!-- Tab Saque -->
+  <div id="tab-saque" class="section active">
+    <label for="inp-valor">Valor a sacar (R$)</label>
+    <input id="inp-valor" type="number" min="0.05" step="0.05" placeholder="0,00" />
+    <button class="btn-success" onclick="realizarSaque()">Sacar</button>
+
+    <div id="alert-saque" class="alert"></div>
+
+    <div id="resultado-saque" style="display:none; margin-top:16px">
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:6px">Cédulas / Moedas entregues:</div>
+      <div id="cedulas-grid" class="cedulas-grid"></div>
+    </div>
+
+    <div id="sugestoes-box" style="display:none; margin-top:16px">
+      <div style="font-size:.8rem;color:var(--yellow);margin-bottom:6px">💡 Valores sugeridos disponíveis:</div>
+      <div id="sugestoes-lista" class="sugestoes"></div>
+    </div>
+  </div>
+
+  <div class="logout"><a onclick="logout()">Encerrar sessão</a></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TELA 3 — ADMIN
+══════════════════════════════════════════════════════════ -->
+<div id="tela-admin" class="card section">
+  <h2>⚙ Painel do Operador</h2>
+
+  <div class="tabs">
+    <div class="tab active" onclick="ativarTabAdmin('estoque-admin')">📦 Estoque</div>
+    <div class="tab" onclick="ativarTabAdmin('carregar-admin')">➕ Carregar</div>
+    <div class="tab" onclick="ativarTabAdmin('descarregar-admin')">➖ Descarregar</div>
+    <div class="tab" onclick="ativarTabAdmin('clientes-admin')">👥 Clientes</div>
+    <div class="tab" onclick="ativarTabAdmin('contas-admin')">👤 Nova Conta</div>
+    <div class="tab" onclick="window.location.href='/relatorio.html'">📋 Relatório</div>
+  </div>
+
+  <!-- Tab Estoque Admin -->
+  <div id="tab-estoque-admin" class="section active">
+    <table>
+      <thead><tr><th>Denominação</th><th>Qtd</th><th>Subtotal</th></tr></thead>
+      <tbody id="tbody-estoque-admin"></tbody>
+    </table>
+    <button class="btn-ghost" style="margin-top:12px" onclick="carregarEstoqueAdmin()">↺ Atualizar</button>
+  </div>
+
+  <!-- Tab Carregar -->
+  <div id="tab-carregar-admin" class="section">
+    <label>Denominação</label>
+    <select id="sel-denom-carregar"></select>
+    <label>Quantidade</label>
+    <input id="inp-qtd-carregar" type="number" min="1" step="1" placeholder="10" />
+    <button class="btn-success" onclick="operacaoAdmin('carregar')">➕ Adicionar ao Caixa</button>
+    <div id="alert-carregar" class="alert"></div>
+  </div>
+
+  <!-- Tab Descarregar -->
+  <div id="tab-descarregar-admin" class="section">
+    <label>Denominação</label>
+    <select id="sel-denom-descarregar"></select>
+    <label>Quantidade</label>
+    <input id="inp-qtd-descarregar" type="number" min="1" step="1" placeholder="10" />
+    <button class="btn-danger" onclick="operacaoAdmin('descarregar')">➖ Remover do Caixa</button>
+    <div id="alert-descarregar" class="alert"></div>
+  </div>
+
+  <!-- Tab Nova Conta -->
+  <div id="tab-contas-admin" class="section">
+    <label for="inp-nova-conta-id">ID da Conta</label>
+    <input id="inp-nova-conta-id" type="text" placeholder="Ex: joao, 003..." autocomplete="off" />
+    <label for="inp-nova-conta-saldo">Saldo Inicial (R$)</label>
+    <input id="inp-nova-conta-saldo" type="number" min="0" step="0.01" placeholder="0,00" />
+    <button class="btn-primary" onclick="cadastrarConta()">👤 Cadastrar Conta</button>
+    <div id="alert-contas" class="alert"></div>
+  </div>
+
+  <!-- Tab Clientes -->
+  <div id="tab-clientes-admin" class="section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <input id="inp-busca-cliente" type="text" placeholder="🔍 Buscar por ID..."
+        style="margin-bottom:0;flex:1;margin-right:8px" oninput="filtrarClientes()" />
+      <button class="btn-ghost" style="width:auto;padding:8px 14px;white-space:nowrap"
+        onclick="carregarClientesAdmin()">↺ Atualizar</button>
+    </div>
+    <table>
+      <thead><tr><th>ID da Conta</th><th style="text-align:right">Saldo</th></tr></thead>
+      <tbody id="tbody-clientes-admin"></tbody>
+    </table>
+    <div id="alert-clientes" class="alert"></div>
+  </div>
+
+  <div class="logout"><a onclick="voltarLogin()">← Voltar ao login</a></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script src="js/app.js"></script>
+</body>
+</html>
