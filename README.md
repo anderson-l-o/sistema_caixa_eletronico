@@ -138,7 +138,7 @@ sistema_caixa_eletronico/
 │   │   └── RepositorioContas.ts     # Repositório em memória de contas
 │   │
 │   ├── services/
-│   │   ├── CaixaEletronicoService.ts # Facade principal
+│   │   ├── CaixaEletronicoService.ts # Fachada principal
 │   │   ├── EstoqueService.ts         # Operações de inventário
 │   │   ├── SaqueService.ts           # Lógica de saque e sugestões
 │   │   └── GestorNotificadores.ts    # Padrão Observer
